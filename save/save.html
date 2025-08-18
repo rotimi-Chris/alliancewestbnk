@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alliance West Bank</title>
+    <link rel="stylesheet" href="save.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+/* Chat Toggle Button */
+.chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+    z-index: 999;
+}
+
+/* Chat Box */
+.chat-box {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.chat-header {
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+}
+
+.chat-messages .message {
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.message.user {
+    background: #DCF8C6;
+    align-self: flex-end;
+}
+
+.message.bot {
+    background: #f1f1f1;
+    align-self: flex-start;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+.chat-input button {
+    padding: 10px;
+    border: none;
+    background: #007BFF;
+    color: white;
+    cursor: pointer;
+}
+
+/* Mobile Responsive */
+@media (max-width: 500px) {
+    .chat-box {
+        width: 90%;
+        right: 5%;
+        bottom: 80px;
+        max-height: 70%;
+    }
+}
+</style>
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a class="logo" href="#">Alliance West<span> Bank</span></a>
+
+            <img id="mobile-cta" class="mobile-menu" src="/images/menu.svg" alt="Open Navigation">
+
+            <nav>
+                <img id="mobile-exit" class="mobile-menu-exit" src="/images/exit.svg" alt="Close Navigation">
+                
+                <ul class="primary-nav">
+                    <li class="current"><a href="../index.html">Home</a></li>
+                    <li><a style="color: #007bff;" href="#">Save</a></li>
+                    <li><a href="/borrow/borrow.html">Borrow</a></li>
+                    <li><a href="/about/about.html">About Us</a></li>
+                </ul>
+
+                <ul class="secondary-nav">
+                    <li><a class="open-btn" onclick="openOverlay()" href="#">Log In</a></li>
+                
+                    <!-- Overlay -->
+                    <div id="loginOverlay" class="overlay">
+                        <div class="overlay-content">
+                            <button class="close-btn" onclick="closeOverlay()">✖</button>
+                            <h2 style="text-align: center;">Login</h2>
+                            <form id="loginForm" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                                <input type="text" id="account_number" name="account_number" placeholder="Account ID" required>
+                                <input id="password" name="password" type="password" placeholder="Password" required>
+                                <div style="margin-top: 20px;">
+                                    <button style="border-radius: 40px;" type="submit" class="login-btn">Login</button>
+                                </div>
+                                <div class="message" id="message"></div>
+                            </form>
+                        </div>
+                    </div>
+                
+                    <li class="go-premium-cta"><a href="/openaccount.html">Create Account</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+  <section class="savings-section">
+    <div class="intro">
+      <h1>The Smart Place to Save</h1>
+      <p>
+        Whether you are saving toward short- or long-term goals or creating a retirement nest egg,
+        we can help you find the savings plan that works best for you. Enjoy competitive savings account
+        rates on products for the entire family.
+      </p>
+      <p>
+        At Golden, we have an array of products to meet your savings goals — from High Yield Savings accounts
+        to Kids Savings Accounts and Holiday Club, Money Market Savings Accounts and more!
+      </p>
+      <!-- <a class="cta" href="../openaccount.html">Open a Savings Account</a> -->
+      <a class="cta outline" href="#">Schedule an Appointment</a>
+    </div>
+
+    <div class="highlight">
+      <strong>Alliance</strong> is recognized as a <em>Forbes 2021 Best-in-State Credit Union</em> and in the top 1%
+      for returning value nationwide in the 2021 Callahan & Associates Return to Member scoring.
+    </div>
+
+    <div class="account-types">
+      <div class="card">
+        <h3>High Yield Savings</h3>
+        <p>Earn high returns with flexible access to your money. Ideal for serious savers.</p>
+        <a href="#">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Star Savings</h3>
+        <p>Perfect for short- or long-term goals. Great rates, mobile access & more.</p>
+        <a href="#">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Certificates (CDs)</h3>
+        <p>Lock in high rates with flexible terms. Secure savings over time.</p>
+        <a href="#">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Holiday Club</h3>
+        <p>Save up for the holidays all year round with automatic annual transfers.</p>
+        <a href="#">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Kids Club Savings</h3>
+        <p>Teach kids to save smart! Includes $10 birthday gift & fun features.</p>
+        <a href="#">Learn more →</a>
+      </div>
+      <div class="card">
+        <h3>Money Market Account</h3>
+        <p>Earn more as your balance grows — with flexible withdrawal access.</p>
+        <a href="#">Learn more →</a>
+      </div>
+    </div>
+  </section>
+  <!-- Chat Toggle Button -->
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+    <!-- Chat Box -->
+    <div class="chat-box" id="chatBox">
+        <div class="chat-header">Banking Assistant</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Ask anything...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>Alliance West Bank</h3>
+                    <p>Premier provider of Alliance West services with a global presence and commitment to excellence.</p>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="#" style="color: white; margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: white; margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: white; margin-right: 1rem; font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="offshore-banking.html">Alliance Banking</a></li>
+                        <li><a href="company-formation.html">Company Formation</a></li>
+                        <li><a href="investment-services.html">Investment Services</a></li>
+                        <li><a href="wealth-management.html">Wealth Management</a></li>
+                        <li><a href="asset-protection.html">Asset Protection</a></li>
+                        <li><a href="trust-fiduciary.html">Trust & Fiduciary</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Jurisdictions</h3>
+                    <ul>
+                        <li><a href="#">Cayman Islands</a></li>
+                        <li><a href="#">British Virgin Islands</a></li>
+                        <li><a href="#">Bahamas</a></li>
+                        <li><a href="#">Seychelles</a></li>
+                        <li><a href="#">Nevis</a></li>
+                        <li><a href="#">Delaware (USA)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Financial District, Suite 1200<br>George Town, Grand Cayman</li>
+                        <li><i class="fas fa-phone"></i> +1 (345) 949-8888</li>
+                        <li><i class="fas fa-envelope"></i> info@alliancewestbnk.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Alliance west bank. All rights reserved. | <a href="#" style="color: #94a3b8;">Privacy Policy</a> | <a href="#" style="color: #94a3b8;">Terms of Service</a> | <a href="#" style="color: #94a3b8;">Disclaimer</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    
+     /* CHATBOT */
+        function toggleChat() {
+            const chatBox = document.getElementById("chatBox");
+            chatBox.style.display = (chatBox.style.display === "flex") ? "none" : "flex";
+        }
+
+        // Predefined banking answers
+        const bankingFAQ = {
+            "open account": "You can open a new account online by filling our registration form on the bank's website.",
+            "transfer money": "To transfer money, log in to your online banking, go to 'Transfers', enter recipient details, and confirm.",
+            "reset password": "You can reset your password by clicking 'Forgot Password' on the login page.",
+            "loan": "We offer personal, business, and mortgage loans. Visit the 'Loans' section in online banking for details.",
+            "credit card": "Our credit card services include online applications and account management via web banking.",
+            "exchange rate": "You can view live exchange rates in the 'Forex' section of your online banking dashboard."
+        };
+
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const message = input.value.trim();
+            if (message === "") return;
+
+            // Add user message
+            addMessage(message, "user");
+
+            // Bot response
+            setTimeout(() => {
+                let reply = getBankingReply(message);
+                addMessage(reply, "bot");
+            }, 500);
+
+            input.value = "";
+        }
+
+        function getBankingReply(userMessage) {
+            let lowerMsg = userMessage.toLowerCase();
+            for (let key in bankingFAQ) {
+                if (lowerMsg.includes(key)) {
+                    return bankingFAQ[key];
+                }
+            }
+            return "I'm here to assist with online banking services. Could you be more specific?";
+        }
+
+        function addMessage(text, sender) {
+            const chatMessages = document.getElementById("chatMessages");
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", sender);
+            msgDiv.textContent = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // TOGGLE BUTTON
+
+        const mobileBtn = document.getElementById('mobile-cta')
+              nav = document.querySelector('nav')
+              mobileBtnExit = document.getElementById('mobile-exit');
+
+        mobileBtn.addEventListener('click', () => {
+            nav.classList.add('menu-btn');
+        })
+
+        mobileBtnExit.addEventListener('click', () => {
+            nav.classList.remove('menu-btn');
+        })
+
+        
+        function openOverlay() {
+            document.getElementById("loginOverlay").style.display = "flex";
+        }
+        function closeOverlay() {
+            document.getElementById("loginOverlay").style.display = "none";
+        }
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const account_number = document.getElementById("account_number").value.trim();
+                const password = document.getElementById("password").value.trim();
+                const messageEl = document.getElementById("message");
+
+                messageEl.textContent = "";
+                messageEl.className = "message";
+
+                try {
+                    const res = await fetch("https://bank-api-vqsk.onrender.com/account/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ account_number, password })
+                    });
+
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        messageEl.textContent = data.message || "Login failed";
+                        messageEl.classList.add("error");
+                    } else {
+                        messageEl.textContent = data.message;
+                        messageEl.classList.add("success");
+
+                        // store tokens and account in localStorage
+                        localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("refreshToken", data.refreshToken);
+                        localStorage.setItem("account", JSON.stringify(data.account));
+
+                        // redirect after login
+                        setTimeout(() => {
+                            window.location.href = "/dashboard.html";
+                        }, 1000);
+                    }
+                } catch (error) {
+                    messageEl.textContent = "Error connecting to server";
+                    messageEl.classList.add("error");
+                }
+            });
+            // Hide login & create account if user is already logged in
+                window.addEventListener("DOMContentLoaded", () => {
+                    const accessToken = localStorage.getItem("accessToken");
+
+                    if (accessToken) {
+                        // User is logged in → hide login + create account
+                        const loginBtn = document.querySelector(".open-btn");
+                        const createBtn = document.querySelector(".go-premium-cta");
+
+                        if (loginBtn) loginBtn.style.display = "none";
+                        if (createBtn) createBtn.style.display = "none";
+
+                        // Add profile + logout
+                        const nav = document.querySelector(".secondary-nav");
+                        if (nav && !document.getElementById("logoutBtn")) {
+                            // Profile icon link
+                            const profileLi = document.createElement("li");
+                            profileLi.innerHTML = `
+        <a href="./dashboard.html" id="profileLink" title="Profile" style="font-size:18px;">👤
+        </a>
+      `;
+                            nav.appendChild(profileLi);
+
+                            // Logout link
+                            const logoutLi = document.createElement("li");
+                            logoutLi.innerHTML = `<a href="#" id="logoutBtn">Logout</a>`;
+                            nav.appendChild(logoutLi);
+
+                            // Logout event
+                            document.getElementById("logoutBtn").addEventListener("click", () => {
+                                localStorage.removeItem("accessToken");
+                                localStorage.removeItem("refreshToken");
+                                localStorage.removeItem("account");
+                                window.location.href = "/index.html"; // redirect after logout
+                            });
+                        }
+                    }
+                });
+
+
+    </script>
+
+</body>
+</html>

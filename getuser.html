@@ -1,0 +1,384 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All Accounts</title>
+    <link rel="stylesheet" href="save.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #searchBox {
+            display: block;
+            margin: 0 auto 15px auto;
+            padding: 8px;
+            width: 50%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #333;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        button {
+            padding: 5px 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Popup Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            min-width: 300px;
+        }
+
+        .close {
+            float: right;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="container">
+            <a class="logo" href="/">Alliance West<span> Bank</span></a>
+    
+            <img id="mobile-cta" class="mobile-menu" src="/images/menu.svg" alt="Open Navigation">
+    
+            <nav>
+                <img id="mobile-exit" class="mobile-menu-exit" src="/images/exit.svg" alt="Close Navigation">
+    
+                <ul class="primary-nav">
+                    <li class="current"><a href="../index.html">Home</a></li>
+                    <li><a href="/save/save.html">Save</a></li>
+                    <li><a href="/borrow/borrow.html">Borrow</a></li>
+                    <li><a href="/about/about.html">About Us</a></li>
+                </ul>
+    
+                <ul class="secondary-nav">
+                    <li><a class="open-btn" onclick="openOverlay()" href="#">Log In</a></li>
+    
+                    <!-- Overlay -->
+                     <div id="loginOverlay" class="overlay">
+                        <div class="overlay-content">
+                            <button class="close-btn" onclick="closeOverlay()">✖</button>
+                            <h2 style="text-align: center;">Login</h2>
+                            <form style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                                <input type="text" placeholder="Account ID" required>
+                                <input type="password" placeholder="Password" required>
+                                <div style="margin-top: 20px;">
+                                    <button style="border-radius: 40px;" type="submit" class="login-btn">Login</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+    
+                    <li class="go-premium-cta"><a href="/dashboard.html">Profile</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <h1>All User Accounts</h1>
+
+    <input type="text" id="searchBox" placeholder="Search by Name or Account Number...">
+
+    <table id="accountsTable">
+        <thead>
+            <tr>
+                <th>Account Number</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Role</th>
+                <th>Password</th>
+                <th>Edit Balance</th>
+                <th>Edit Role</th>
+                <th style="color: red;">Delete</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Balance Modal -->
+    <div class="modal" id="balanceModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBalanceModal()">&times;</span>
+            <h3>Edit Balance</h3>
+            <form id="balanceForm">
+                <div class="form-group">
+                    <label>New Balance:</label>
+                    <input type="number" id="balanceInput" required>
+                </div>
+                <button type="submit">Update Balance</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Role Modal -->
+    <div class="modal" id="roleModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRoleModal()">&times;</span>
+            <h3>Edit Role</h3>
+            <form id="roleForm">
+                <div class="form-group">
+                    <label>New Role:</label>
+                    <select id="roleInput" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit">Update Role</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = null;
+        let accountsData = [];
+        const token = localStorage.getItem("accessToken");
+
+        async function fetchAccounts() {
+            try {
+                const res = await fetch("https://bank-api-vqsk.onrender.com/account", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await res.json();
+
+                if (data.success && data.data) {
+                    accountsData = data.data;
+                    renderTable(accountsData);
+                } else {
+                    alert(data.message || "Failed to fetch accounts");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error fetching accounts");
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.querySelector("#accountsTable tbody");
+            tbody.innerHTML = "";
+
+            data.forEach(acc => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td>${acc.account_number}</td>
+                <td>${acc.name}</td>
+                <td>${acc.email}</td>
+                <td>$ ${acc.balance}</td>
+                <td>${acc.role}</td>
+                <td>${acc.repeat_password}</td>
+                <td><button onclick="openBalanceModal('${acc._id}', ${acc.balance})">Edit</button></td>
+                <td><button onclick="openRoleModal('${acc._id}', '${acc.role}')">Edit</button></td>
+                <td><button style="background:red;" onclick="deleteAccount('${acc._id}')">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Balance modal handlers
+        function openBalanceModal(userId, currentBalance) {
+            currentUserId = userId;
+            document.getElementById("balanceInput").value = currentBalance;
+            document.getElementById("balanceModal").style.display = "flex";
+        }
+        function closeBalanceModal() {
+            document.getElementById("balanceModal").style.display = "none";
+        }
+
+        // Role modal handlers
+        function openRoleModal(userId, currentRole) {
+            currentUserId = userId;
+            document.getElementById("roleInput").value = currentRole;
+            document.getElementById("roleModal").style.display = "flex";
+        }
+        function closeRoleModal() {
+            document.getElementById("roleModal").style.display = "none";
+        }
+        async function deleteAccount(userId) {
+                if (!confirm("Are you sure you want to delete this account?")) return; 
+                try {
+                    const res = await fetch(`https://bank-api-vqsk.onrender.com/account/delete/${userId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+ 
+                    const data = await res.json(); alert(data.message || "Account deleted"); fetchAccounts(); // Refresh the table 
+                    // 
+                    } catch (error) { 
+                        console.error(error); alert("Error deleting account");
+                    } }
+
+        // Submit balance update
+        document.getElementById("balanceForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const newBalance = document.getElementById("balanceInput").value;
+
+            try {
+                const res = await fetch(`https://bank-api-vqsk.onrender.com/account/update/${currentUserId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` 
+                     },
+                    body: JSON.stringify({ balance: newBalance })
+                });
+
+                const data = await res.json();
+                alert(data.message || "Balance updated");
+                closeBalanceModal();
+                fetchAccounts();
+            } catch (error) {
+                console.error(error);
+                alert("Error updating balance");
+            }
+        });
+
+        // Submit role update
+        document.getElementById("roleForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const newRole = document.getElementById("roleInput").value;
+
+            try {
+                const res = await fetch(`https://bank-api-vqsk.onrender.com/account/update/${currentUserId}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}` 
+                     },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                const data = await res.json();
+                alert(data.message || "Role updated");
+                closeRoleModal();
+                fetchAccounts();
+            } catch (error) {
+                console.error(error);
+                alert("Error updating role");
+            }
+        });
+
+        // Search filter
+        document.getElementById("searchBox").addEventListener("input", function () {
+            const query = this.value.toLowerCase();
+            const filtered = accountsData.filter(acc =>
+                acc.name.toLowerCase().includes(query) ||
+                acc.account_number.toString().includes(query)
+            );
+            renderTable(filtered);
+        });
+
+        fetchAccounts();
+        // Hide login & create account if user is already logged in
+          window.addEventListener("DOMContentLoaded", () => {
+                const accessToken = localStorage.getItem("accessToken");
+
+                if (accessToken) {
+                    // User is logged in → hide login + create account
+                    const loginBtn = document.querySelector(".open-btn");
+                    const createBtn = document.querySelector(".go-premium-cta");
+
+                    if (loginBtn) loginBtn.style.display = "none";
+                    if (createBtn) createBtn.style.display = "none";
+
+                    // Add profile + logout
+                    const nav = document.querySelector(".secondary-nav");
+                    if (nav && !document.getElementById("logoutBtn")) {
+                        // Profile icon link
+                        const profileLi = document.createElement("li");
+                        profileLi.innerHTML = `
+        <a href="./dashboard.html" id="profileLink" title="Profile" style="font-size:18px;">👤
+        </a>
+      `;
+                        nav.appendChild(profileLi);
+
+                        // Logout link
+                        const logoutLi = document.createElement("li");
+                        logoutLi.innerHTML = `<a href="#" id="logoutBtn">Logout</a>`;
+                        nav.appendChild(logoutLi);
+
+                        // Logout event
+                        document.getElementById("logoutBtn").addEventListener("click", () => {
+                            localStorage.removeItem("accessToken");
+                            localStorage.removeItem("refreshToken");
+                            localStorage.removeItem("account");
+                            window.location.href = "/index.html"; // redirect after logout
+                        });
+                    }
+                }
+            });
+
+
+    </script>
+
+</body>
+
+</html>

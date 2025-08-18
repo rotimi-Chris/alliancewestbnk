@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alliance West Bank</title>
+  <link rel="stylesheet" href="openaccount.css">
+  <style>
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .modal-content {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      text-align: center;
+      width: 350px;
+      max-width: 90%;
+    }
+  
+    .modal-content h2 {
+      margin-bottom: 10px;
+    }
+  
+    .modal-content button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  
+    .modal-content button:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <h2>✅ Account Created Successfully!</h2>
+      <p id="accountInfo"></p>
+      <button id="goToLogin">Go to Login</button>
+    </div>
+  </div>
+  <div class="form-container">
+    <h2>Complete Your Enrollment</h2>
+    
+    <form id="registerForm" method="post">
+        <!-- Personal Section -->
+        <fieldset>
+            <legend>Personal</legend>
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="tel" name="phone" placeholder="Phone" required>
+            <input type="date" name="dob" placeholder="Date of Birth" required>
+            <select name="gender" required>
+                <option disabled selected>Gender</option>
+                <option>Female</option>
+                <option>Male</option>
+                <option>Others</option>
+            </select>
+            <input type="text" name="occupation" placeholder="Occupation" required>
+        </fieldset>
+    
+        <!-- Contact Section -->
+        <fieldset>
+       <legend>Contact</legend>
+        <select class="country" name="country" required>
+          <option disabled selected>Country</option>
+        </select>
+
+        <select class="state" name="state" required>
+          <option disabled selected>State</option>
+        </select>
+
+        <select class="city" name="city" required>
+          <option disabled selected>City</option>
+        </select>
+
+            
+            <input type="text" name="zip" placeholder="ZIP" required>
+            <textarea name="address" placeholder="Address"></textarea>
+        </fieldset>
+    
+        <!-- Next of Kin -->
+        <fieldset>
+            <legend>Next of Kin</legend>
+            <input type="text" name="nextOfKin_name" placeholder="Name" required>
+            <input type="email" name="nextOfKin_email" placeholder="Email" required>
+            <input type="tel" name="nextOfKin_phone" placeholder="Phone" required>
+            <input type="text" name="nextOfKin_relationship" placeholder="Relationship" required>
+            
+        </fieldset>
+    
+        <!-- Security Section -->
+        <fieldset>
+            <legend>Security</legend>
+         <!--   <input type="password" name="password" placeholder="Password" required> -->
+             <div style="position: relative;">
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <span id="togglePassword" style="
+                    position: absolute;
+                    right: 10px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                    font-size: 14px;
+                    color: gray;
+            ">👁</span>
+            </div>
+
+
+
+
+            <input type="password" name="repeat_password" placeholder="Repeat Password" required>
+            <!-- <input type="number" name="pin" placeholder="4-digit PIN" required> -->
+            <!-- <select name="account_currency">
+                <option>US Dollar</option>
+                <option>Euro</option>
+                <option>Pounds Sterling</option>
+                <option>Canadian</option>
+                <option>Australian Dollar</option>
+            </select> -->
+        </fieldset>
+    
+        <button type="submit">SUBMIT FORM</button>
+    </form>
+
+
+    <script src="apiselect.js"></script>
+    <script src="formsubmit.js" defer></script>
+    <script src="password.js"></script>
+  </div>
+</body>
+</html>
